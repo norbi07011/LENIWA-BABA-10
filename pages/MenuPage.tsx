@@ -64,7 +64,7 @@ const IngredientsModal: React.FC<{ item: MenuItem; onClose: () => void }> = ({ i
                 <div className="mt-auto p-4 bg-slate-100 dark:bg-black/20 text-center border-t border-slate-200 dark:border-folk-blue/20">
                      <button
                         onClick={onClose}
-                        className="bg-folk-red text-white font-bold py-2 px-8 rounded-full hover:bg-folk-pink transform active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-red/40"
+                        className="bg-folk-red text-white font-bold py-2.5 px-8 rounded-lg hover:bg-folk-pink transform active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-red/40"
                     >
                         {t('close')}
                     </button>
@@ -177,7 +177,7 @@ const LightboxModal: React.FC<{ item: MenuItem; onClose: () => void }> = ({ item
                      <div className="mt-8 pt-6 border-t border-slate-300 dark:border-folk-blue/20">
                         <button
                             onClick={() => setIsIngredientsModalOpen(true)}
-                            className="w-full bg-transparent border-2 border-slate-300 dark:border-folk-blue/50 text-text-dark-secondary dark:text-text-light-secondary font-semibold py-3 px-6 rounded-full hover:bg-slate-200/50 dark:hover:bg-white/10 transition-colors hover:ring-2 hover:ring-folk-blue/50"
+                            className="w-full bg-transparent border-2 border-slate-300 dark:border-folk-blue/50 text-text-dark-secondary dark:text-text-light-secondary font-semibold py-2.5 px-6 rounded-lg hover:bg-slate-200/50 dark:hover:bg-white/10 transition-colors hover:ring-2 hover:ring-folk-blue/50"
                         >
                             {t('allergens_and_ingredients')}
                         </button>
@@ -249,7 +249,7 @@ export const MenuPage: React.FC<PageProps> = ({ id }) => {
                         <h1 className="text-5xl md:text-7xl font-bold text-folk-red font-serif tracking-wider drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('menu_title')}</h1>
                         <FolkArtFlourish className="text-folk-red/50 transform scale-x-[-1] hidden md:block" />
                     </div>
-                    <p className="mt-4 text-xl text-white font-medium max-w-2xl mx-auto drop-shadow-lg [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%)]">{t('menu_subtitle')}</p>
+                    <p className="mt-4 text-xl text-text-dark dark:text-white font-medium max-w-2xl mx-auto drop-shadow-lg">{t('menu_subtitle')}</p>
                 </AnimatedSection>
 
                 {/* Tabs */}
@@ -336,7 +336,12 @@ export const MenuPage: React.FC<PageProps> = ({ id }) => {
                             <FolkArtCorner className="absolute -bottom-1 -left-1 text-folk-red/20 w-16 h-16 transform -rotate-90" />
                             <FolkArtCorner className="absolute -bottom-1 -right-1 text-folk-red/20 w-16 h-16 transform rotate-180" />
                             <h2 className="text-3xl font-bold text-white drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('daily_menu_facebook')}</h2>
-                            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-3 bg-folk-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-folk-blue/80 transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-blue/40">
+                            <a
+                                href={FACEBOOK_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-3 px-8 py-3 mt-6 text-lg font-semibold text-black bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-md shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out"
+                            >
                                 <FacebookIcon className="w-6 h-6" />
                                 {t('view_daily_menu_facebook')}
                             </a>

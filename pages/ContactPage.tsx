@@ -109,7 +109,7 @@ export const ContactPage: React.FC<PageProps> = ({ id }) => {
                                 src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                                 width="100%"
                                 height="100%"
-                                style={{ border: 0 }}
+                                className="border-0"
                                 allowFullScreen={false}
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
@@ -131,20 +131,15 @@ export const ContactPage: React.FC<PageProps> = ({ id }) => {
                         </a>
                     </div>
                     <div 
-                        className="text-center mt-12 p-8 rounded-lg shadow-lg border border-slate-200 dark:border-folk-red/20 relative overflow-hidden"
-                        style={{
-                            backgroundImage: "url('/images/TŁO FACEBOOK .jpg')",
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
-                        }}
+                        className="text-center mt-12 p-8 rounded-lg shadow-lg border border-slate-200 dark:border-folk-red/20 relative overflow-hidden bg-cover bg-center bg-no-repeat"
+                        style={{backgroundImage: "url('/images/TŁO FACEBOOK .jpg')"}}
                     >
                         {/* Dark overlay for better text readability */}
                         <div className="absolute inset-0 bg-black/60 rounded-lg"></div>
                         
                         <div className="relative z-10">
                             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('daily_menu_facebook')}</h2>
-                            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-folk-blue text-white font-bold py-4 px-10 rounded-full text-xl hover:bg-folk-blue/80 transform active:scale-95 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-blue/40">
+                            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-folk-blue text-white font-bold py-3 px-8 rounded-lg text-xl hover:bg-folk-blue/80 transform active:scale-95 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-blue/40">
                                 <FacebookIcon className="w-6 h-6" />
                                 {t('view_daily_menu_facebook')}
                             </a>

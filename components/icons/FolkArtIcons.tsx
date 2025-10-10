@@ -38,7 +38,7 @@ export const FolkArtFlowerFrame: React.FC<{ className?: string }> = ({ className
         viewBox="0 0 400 250"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="stretch"
+        preserveAspectRatio="none"
     >
         <path
             d="M50 2 C20 2 2 20 2 50 V 200 C 2 230 20 248 50 248 H 175 C 190 263 210 263 225 248 H 350 C 380 248 398 230 398 200 V 50 C 398 20 380 2 350 2 H 225 C 210 -13 190 -13 175 2 H 50 Z"

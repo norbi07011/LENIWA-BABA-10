@@ -5,66 +5,59 @@ import { translations } from '../i18n/translations';
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
-    const savedLang = localStorage.getItem('language');
-    return (savedLang as Language) || Language.PL;
-  });
+interface AppProviderProps {
+    children: React.ReactNode;
+}
 
-  const [theme, setTheme] = useState<'light' | 'dark' | 'wood' | 'flower'>(() => {
-     if (typeof window !== 'undefined') {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'wood' || savedTheme === 'flower') {
-            return savedTheme;
+export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+    // Initialize language from localStorage or default to NL, but only on client
+    const [language, setLanguage] = useState<Language>(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('language') as Language;
+            if (stored && Object.values(Language).includes(stored)) {
+                return stored;
+            }
         }
-     }
-     return 'dark';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('dark', 'theme-wood', 'theme-flower');
-    
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else if (theme === 'wood') {
-        root.classList.add('dark', 'theme-wood');
-    } else if (theme === 'flower') {
-        root.classList.add('dark', 'theme-flower');
-    }
-    
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-  };
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => {
-        if (prevTheme === 'light') return 'dark';
-        if (prevTheme === 'dark') return 'wood';
-        if (prevTheme === 'wood') return 'flower';
-        return 'light'; // from 'flower' back to 'light'
+        return Language.NL;
     });
-  };
 
-  const t = useCallback((key: string): string => {
-    return translations[key]?.[language] || key;
-  }, [language]);
+    const [theme, setTheme] = useState<'light' | 'dark' | 'wood' | 'flower'>('light');
 
-  const value = {
-    language,
-    setLanguage,
-    t,
-    theme,
-    toggleTheme,
-  };
+    // Save language to localStorage whenever it changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('language', language);
+        }
+    }, [language]);
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+    const changeLanguage = useCallback((newLanguage: Language) => {
+        setLanguage(newLanguage);
+    }, []);
+
+    const toggleTheme = useCallback(() => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    }, []);
+
+    const t = useCallback((key: string): string => {
+        console.log(`[DEBUG] t called with key: "${key}", language: ${language}`);
+        console.log(`[DEBUG] translations[${key}]:`, translations[key]);
+        console.log(`[DEBUG] translations[${key}]?.[${language}]:`, translations[key]?.[language]);
+        const result = translations[key]?.[language] || key;
+        console.log(`[DEBUG] result: "${result}"`);
+        return result;
+    }, [language]);
+
+    const contextValue: AppContextType = {
+        language,
+        theme,
+        setLanguage: changeLanguage,
+        toggleTheme,
+        t,
+    };
+
+    return (
+        <AppContext.Provider value={contextValue}>
+            {children}
+        </AppContext.Provider>
+    );
 };

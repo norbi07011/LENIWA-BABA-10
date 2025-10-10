@@ -62,11 +62,11 @@ export const ReviewsPage: React.FC<PageProps> = ({ id }) => {
                             <span className="text-2xl font-bold text-text-dark dark:text-text-light">4.3 / 5</span>
                         </div>
                         <p className="text-sm text-slate-500 dark:text-slate-400">({t('based_on_reviews')})</p>
-                        <a 
-                            href={GOOGLE_REVIEWS_URL} 
-                            target="_blank" 
+                        <a
+                            href={GOOGLE_REVIEWS_URL}
+                            target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-4 inline-block bg-folk-blue text-white font-semibold py-2 px-6 rounded-full hover:bg-folk-blue/80 transition-all duration-300 active:scale-95 hover:shadow-md hover:shadow-folk-blue/40"
+                            className="inline-flex items-center justify-center px-6 py-2.5 mt-4 text-base font-semibold text-black bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-md shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out"
                         >
                             {t('all_reviews_google')}
                         </a>
@@ -94,10 +94,22 @@ export const ReviewsPage: React.FC<PageProps> = ({ id }) => {
                         ))}
                     </div>
 
-                    <button onClick={prevSlide} className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 bg-white/10 dark:bg-black/20 p-2 rounded-full hover:bg-white/20 dark:hover:bg-black/30 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50">
+                    <button 
+                        type="button"
+                        onClick={prevSlide} 
+                        aria-label="Previous review"
+                        title="Previous review"
+                        className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 bg-white/10 dark:bg-black/20 p-2 rounded-full hover:bg-white/20 dark:hover:bg-black/30 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
-                     <button onClick={nextSlide} className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 bg-white/10 dark:bg-black/20 p-2 rounded-full hover:bg-white/20 dark:hover:bg-black/30 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50">
+                    <button 
+                        type="button"
+                        onClick={nextSlide} 
+                        aria-label="Next review"
+                        title="Next review"
+                        className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 bg-white/10 dark:bg-black/20 p-2 rounded-full hover:bg-white/20 dark:hover:bg-black/30 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
 
@@ -116,7 +128,7 @@ export const ReviewsPage: React.FC<PageProps> = ({ id }) => {
                 {/* Facebook Community Section */}
                 <AnimatedSection className="mt-24 text-center">
                     <h2 className="text-3xl font-bold text-text-dark dark:text-text-light">{t('join_community')}</h2>
-                    <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="mt-6 inline-block bg-folk-blue text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-folk-blue/80 transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-blue/40">
+                    <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="mt-6 inline-block bg-folk-blue text-white font-bold py-2.5 px-8 rounded-lg text-lg hover:bg-folk-blue/80 transform hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-blue/40">
                         Facebook
                     </a>
                 </AnimatedSection>

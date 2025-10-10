@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
 import { FACEBOOK_URL, OCCASIONS_DATA, TEAM_DATA } from '../constants';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { FolkArtCorner, FolkArtFlourish, FolkArtFlowerFrame, FlowerArtCorner } from '../components/icons/FolkArtIcons';
+import { StarRating } from '../components/StarRating';
 
 // Hero carousel images
 const HERO_IMAGES = [
@@ -10,9 +11,18 @@ const HERO_IMAGES = [
   'okładka strony3.jpg', 
   'okładka strony4.jpg',
   'OKŁADKA STRONY 2.jpg',
+  'okładka strony5.jpg',
+  'okładka strony6.jpg',
+  'okładka strony7.jpg',
+  'okładka strony8.jpg',
+  'okładka strony9.jpg',
+  'okładka strony10.jpg',
+  'okładka strony11.jpg',
   'TŁO O NAS .jpg',
   'o nas.png'
 ];
+
+
 
 
 
@@ -40,10 +50,22 @@ const Typewriter: React.FC<{ text: string }> = ({ text }) => {
 
 export const HomePage: React.FC<PageProps> = ({ id }) => {
     const { t, theme } = useAppContext();
+    
     const [currentOccasionIndex, setCurrentOccasionIndex] = useState(0);
     const [currentHeroImage, setCurrentHeroImage] = useState(0);
     const [flippedCards, setFlippedCards] = useState(new Set<number>());
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
+    const [scrollY, setScrollY] = useState(0);
+    const heroRef = useRef<HTMLDivElement>(null);
+
+    // Parallax scroll effect
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollY(window.scrollY);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Hero image carousel effect
     useEffect(() => {
@@ -125,51 +147,90 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
 
     return (
         <div id={id} className="space-y-24 md:space-y-32 pb-24">
-            {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center text-center -mt-20 overflow-hidden">
-                {/* Hero Images Carousel */}
+            {/* Hero Section with Parallax */}
+            <section 
+                ref={heroRef}
+                className="relative min-h-screen flex items-center justify-center text-center -mt-20 overflow-hidden"
+                style={{
+                    transform: `translateY(${scrollY * 0.5}px)`
+                }}
+            >
+                {/* Hero Images Carousel with Ken Burns Effect */}
                 {HERO_IMAGES.map((image, index) => (
                     <div 
                         key={index}
-                        className={`absolute inset-0 parallax-bg transition-opacity duration-1000 ${
+                        className={`absolute inset-0 transition-opacity duration-1000 ${
                             index === currentHeroImage ? 'opacity-100' : 'opacity-0'
-                        }`} 
-                        style={{ 
-                            backgroundImage: `url('/images/${image}')`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
+                        }`}
+                        style={{
+                            transform: `scale(${1 + scrollY * 0.0002})`,
+                            transition: 'opacity 1000ms, transform 100ms'
                         }}
                     >
+                        <div 
+                            className="absolute inset-0 ken-burns"
+                            style={{ 
+                                backgroundImage: `url('/images/${image}')`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat'
+                            }}
+                        />
                         <div className={`absolute inset-0 ${heroOverlayBg}`}></div>
                     </div>
                 ))}
-                 <FolkArtCorner className="absolute -bottom-10 -left-10 text-folk-red/10 w-48 h-48 opacity-50" />
-                 <FolkArtCorner className="absolute -bottom-10 -right-10 text-folk-blue/10 w-48 h-48 opacity-50 transform rotate-90" />
-                <div className="relative z-10 px-4">
-                    <h1 className="text-5xl md:text-7xl font-bold text-folk-red font-serif mb-4 drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_50%)]">
+                
+                <FolkArtCorner className="absolute -bottom-10 -left-10 text-folk-red/10 w-48 h-48 opacity-50" />
+                <FolkArtCorner className="absolute -bottom-10 -right-10 text-folk-blue/10 w-48 h-48 opacity-50 transform rotate-90" />
+                
+                {/* Content with parallax */}
+                <div 
+                    className="relative z-10 px-4"
+                    style={{
+                        transform: `translateY(${scrollY * -0.3}px)`
+                    }}
+                >
+                    <h1 className="text-5xl md:text-7xl font-bold text-gradient-premium font-serif mb-4 text-premium-glow reveal-up">
                         {t('restaurant_name')}
                     </h1>
-                    <p className="text-xl md:text-2xl text-white dark:text-text-light mt-4 h-8 [text-shadow:__1px_1px_2px_rgb(0_0_0_/_70%)]">
+                    <p className="text-xl md:text-2xl text-text-dark dark:text-text-light mt-4 h-8 [text-shadow:_1px_1px_2px_rgb(0_0_0_/_70%)] reveal-up delay-200">
                         <Typewriter text={t('slogan')} />
                     </p>
                     <a
                         href="#reservation"
-                        className="mt-12 inline-block bg-folk-red text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-folk-pink transform active:scale-95 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-red/40"
+                        className="inline-flex items-center gap-3 px-8 py-3 mt-12 text-lg font-semibold text-black bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-md shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out reveal-up delay-300"
                     >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                         {t('nav_reservation')}
                     </a>
                 </div>
                 
-                {/* Hero Carousel Indicators */}
+                {/* Enhanced Progress Bar */}
+                <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 w-64 md:w-96 z-20">
+                    <div className="glass-card rounded-full p-1 backdrop-blur-md">
+                        <div className="relative h-2 bg-white/20 rounded-full overflow-hidden">
+                            <div 
+                                className="absolute inset-0 bg-gradient-to-r from-folk-red via-folk-pink to-folk-red shimmer"
+                                style={{
+                                    width: `${((currentHeroImage + 1) / HERO_IMAGES.length) * 100}%`,
+                                    transition: 'width 400ms ease-out'
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Enhanced Hero Carousel Indicators */}
                 <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
                     {HERO_IMAGES.map((_, index) => (
                         <button
                             key={index}
                             onClick={() => setCurrentHeroImage(index)}
-                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                            className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-110 ${
                                 index === currentHeroImage 
-                                    ? 'bg-folk-red scale-125' 
+                                    ? 'bg-folk-red scale-125 ring-2 ring-white/50' 
                                     : 'bg-white/50 hover:bg-white/80'
                             }`}
                             aria-label={`Go to slide ${index + 1}`}
@@ -228,8 +289,8 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                 </div>
                             </div>
                             <div>
-                                <h2 className="text-4xl font-bold text-white font-serif mb-4 drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('about_us_title')}</h2>
-                                <p className="text-lg text-white leading-relaxed drop-shadow-lg [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%)]">{t('about_us_text')}</p>
+                                <h2 className="text-4xl font-bold text-text-dark dark:text-white font-serif mb-4 drop-shadow-lg">{t('about_us_title')}</h2>
+                                <p className="text-lg text-text-dark dark:text-white leading-relaxed drop-shadow-lg">{t('about_us_text')}</p>
                             </div>
                         </div>
                     </div>
@@ -238,16 +299,23 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
 
             {/* Team Carousel Section */}
             <AnimatedSection className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-center items-center gap-4 mb-12">
-                    <FolkArtFlourish className="text-folk-blue/50 hidden md:block" />
-                    <h2 className="text-4xl font-bold text-folk-red font-serif text-center">{t('our_team_title')}</h2>
-                    <FolkArtFlourish className="text-folk-blue/50 transform scale-x-[-1] hidden md:block" />
+                <div className="text-center mb-16">
+                    <div className="inline-block glass-card px-6 py-2 rounded-full mb-6 backdrop-blur-md">
+                        <span className="text-folk-red font-semibold text-sm uppercase tracking-wider">{t('our_team_label')}</span>
+                    </div>
+                    <h2 className="text-5xl md:text-6xl font-bold text-gradient-premium font-serif mb-6 text-premium-glow">
+                        {t('our_team_title')}
+                    </h2>
+                    <p className="text-lg text-text-dark-secondary dark:text-text-light-secondary max-w-2xl mx-auto">
+                        {t('our_team_description')}
+                    </p>
                 </div>
-                <div className="relative flex justify-center items-center h-[28rem]">
-                    {/* Navigation Buttons */}
+                
+                <div className="relative flex justify-center items-center h-[32rem]">
+                    {/* Navigation Buttons - Premium Style */}
                     <button 
                         onClick={prevTeamMember} 
-                        className="absolute left-0 md:-left-8 z-30 p-2 bg-black/20 rounded-full text-white hover:bg-black/40 transition-all duration-300 hover:ring-2 hover:ring-white/50"
+                        className="absolute left-0 md:-left-12 z-30 glass-card p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
                         title="Poprzedni członek zespołu"
                         aria-label="Poprzedni członek zespołu"
                     >
@@ -255,14 +323,14 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                     </button>
                     <button 
                         onClick={nextTeamMember} 
-                        className="absolute right-0 md:-right-8 z-30 p-2 bg-black/20 rounded-full text-white hover:bg-black/40 transition-all duration-300 hover:ring-2 hover:ring-white/50"
+                        className="absolute right-0 md:-right-12 z-30 glass-card p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
                         title="Następny członek zespołu"
                         aria-label="Następny członek zespołu"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </button>
 
-                    <div className="relative w-full h-full [perspective:1000px]">
+                    <div className="relative w-full h-full [perspective:1500px]">
                         {TEAM_DATA.map((member, index) => {
                             const offset = (index - currentTeamIndex + TEAM_DATA.length) % TEAM_DATA.length;
                             const isCenter = offset === 0;
@@ -272,19 +340,19 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
 
                             let transform = '';
                             let zIndex = 0;
-                            let scale = 0.8;
-                            let opacity = 0.6;
+                            let scale = 0.75;
+                            let opacity = 0.5;
                             
                             if (isCenter) {
-                                transform = 'translateX(0) translateZ(200px)';
+                                transform = 'translateX(0) translateZ(250px)';
                                 zIndex = 30;
                                 scale = 1;
                                 opacity = 1;
                             } else if (isLeft) {
-                                transform = 'translateX(-120%) rotateY(45deg) translateZ(0px)';
+                                transform = 'translateX(-130%) rotateY(50deg) translateZ(0px)';
                                 zIndex = 10;
                             } else if (isRight) {
-                                transform = 'translateX(120%) rotateY(-45deg) translateZ(0px)';
+                                transform = 'translateX(130%) rotateY(-50deg) translateZ(0px)';
                                 zIndex = 10;
                             }
 
@@ -319,7 +387,7 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                             <FlowerArtCorner className="absolute bottom-2 left-2 w-12 h-12 text-folk-red/40 pointer-events-none transform -rotate-90 z-20" />
                                             <FlowerArtCorner className="absolute bottom-2 right-2 w-12 h-12 text-folk-red/40 pointer-events-none transform rotate-180 z-20" />
 
-                                            {/* Member Photo */}
+                                            {/* Member Photo - Circular Avatar */}
                                             <div className="relative z-10 p-6 h-full flex flex-col items-center justify-center text-center">
                                                 <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-folk-red/50 mb-4">
                                                     <img 
@@ -328,20 +396,16 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => {
                                                             console.error(`Failed to load team member image: /images/${member.imageId}`);
-                                                            // Fallback to placeholder
                                                             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(t(member.nameKey))}&size=128&background=8B4513&color=fff&bold=true`;
                                                         }}
                                                     />
                                                 </div>
                                                 
                                                 {/* Member Info */}
-                                                <div className="text-white">
-                                                    <h3 className="text-xl font-bold font-serif mb-2 drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">
-                                                        {t(member.nameKey)}
-                                                    </h3>
-                                                    <p className="text-lg text-folk-yellow font-medium drop-shadow-lg [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%)]">
+                                                <div className="text-text-dark dark:text-white">
+                                                    <h3 className="text-xl font-bold font-serif mb-2 drop-shadow-lg">
                                                         {t(member.positionKey)}
-                                                    </p>
+                                                    </h3>
                                                 </div>
                                             </div>
                                         </div>
@@ -351,16 +415,16 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                         })}
                     </div>
 
-                    {/* Team member indicators */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {/* Team member indicators - Premium Style */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 glass-card px-4 py-2 rounded-full backdrop-blur-md">
                         {TEAM_DATA.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentTeamIndex(index)}
                                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                                     index === currentTeamIndex 
-                                        ? 'bg-folk-red scale-125' 
-                                        : 'bg-white/50 hover:bg-white/80'
+                                        ? 'bg-folk-red scale-125 ring-2 ring-white/50' 
+                                        : 'bg-white/50 hover:bg-white/80 hover:scale-110'
                                 }`}
                                 aria-label={`Przejdź do członka zespołu ${index + 1}`}
                             />
@@ -465,7 +529,10 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                                 <div className="relative z-10">
                                                     <h4 className="text-2xl font-serif font-bold text-folk-red mb-3">{t(occasion.key)}</h4>
                                                     <p className="text-sm text-text-dark-secondary dark:text-text-light-secondary mb-5">{t(occasion.descriptionKey)}</p>
-                                                    <a href="#reservation" className="bg-folk-red text-white font-bold py-2 px-6 rounded-full text-sm hover:bg-folk-pink transform active:scale-95 transition-all duration-300 hover:shadow-lg hover:shadow-folk-red/40">
+                                                    <a
+                                                        href="#reservation"
+                                                        className="inline-flex items-center justify-center px-6 py-2 mt-2 text-base font-semibold text-black bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-md shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out"
+                                                    >
                                                         {t('book_now')}
                                                     </a>
                                                 </div>
@@ -478,6 +545,87 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                     </div>
                 </div>
             </AnimatedSection>
+
+            {/* Competition Section - Nederlandse Horeca Prijzen */}
+            <AnimatedSection className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-900/20 dark:via-yellow-900/20 dark:to-orange-900/20 border-4 border-amber-300 dark:border-amber-600 shadow-2xl">
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 left-0 w-full h-full opacity-5">
+                        <div className="absolute top-4 left-4 w-16 h-16 bg-amber-400 rounded-full animate-pulse"></div>
+                        <div className="absolute top-12 right-8 w-12 h-12 bg-yellow-400 rounded-full animate-pulse delay-300"></div>
+                        <div className="absolute bottom-8 left-12 w-20 h-20 bg-orange-400 rounded-full animate-pulse delay-700"></div>
+                        <div className="absolute bottom-4 right-4 w-14 h-14 bg-amber-400 rounded-full animate-pulse delay-500"></div>
+                    </div>
+                    
+                    {/* Folklor corners */}
+                    <FlowerArtCorner className="absolute top-0 left-0 w-24 h-24 text-amber-500 opacity-30 pointer-events-none" />
+                    <FlowerArtCorner className="absolute top-0 right-0 w-24 h-24 text-amber-500 opacity-30 pointer-events-none transform rotate-90" />
+                    <FlowerArtCorner className="absolute bottom-0 left-0 w-24 h-24 text-amber-500 opacity-30 pointer-events-none transform -rotate-90" />
+                    <FlowerArtCorner className="absolute bottom-0 right-0 w-24 h-24 text-amber-500 opacity-30 pointer-events-none transform rotate-180" />
+
+                    <div className="relative z-10 p-8 md:p-12">
+                        <div className="grid md:grid-cols-2 gap-8 items-center">
+                            {/* Text Content */}
+                            <div className="text-center md:text-left">
+                                <div className="inline-block glass-card px-6 py-2 rounded-full mb-6 backdrop-blur-md bg-amber-100/50 dark:bg-amber-900/50 border border-amber-300 dark:border-amber-600">
+                                    <span className="text-amber-800 dark:text-amber-200 font-semibold text-sm uppercase tracking-wider">
+                                        🏆 Konkurs 2025/2026
+                                    </span>
+                                </div>
+                                
+                                <h2 className="text-3xl md:text-4xl font-bold text-amber-900 dark:text-amber-100 font-serif mb-4 leading-tight">
+                                    {t('competition_title')}
+                                </h2>
+                                
+                                <h3 className="text-xl md:text-2xl font-semibold text-amber-800 dark:text-amber-200 mb-6">
+                                    {t('competition_subtitle')}
+                                </h3>
+                                
+                                <p className="text-amber-700 dark:text-amber-300 leading-relaxed mb-8 text-lg">
+                                    {t('competition_description')}
+                                </p>
+                                
+                                <a
+                                    href="https://www.horecaprijzen.nl/pools-restaurant-leniwa-baba"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-3 px-8 py-4 text-lg font-bold text-black bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300 rounded-xl shadow-2xl shadow-amber-500/50 hover:shadow-amber-400/70 hover:scale-105 active:scale-95 transition-all duration-300 bg-size-200 hover:bg-pos-100 border-2 border-amber-400 hover:border-amber-500"
+                                >
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                    </svg>
+                                    {t('vote_now')}
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                </a>
+                            </div>
+                            
+                            {/* Competition Image */}
+                            <div className="flex justify-center items-center">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-yellow-400 rounded-2xl blur-xl opacity-50 animate-pulse"></div>
+                                    <img
+                                        src="/images/konkurs.jpg"
+                                        alt="Nederlandse Horeca Prijzen 2025/2026"
+                                        className="relative w-80 h-80 object-contain rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-300"
+                                        onError={(e) => {
+                                            console.error('Failed to load competition image');
+                                            e.currentTarget.style.backgroundColor = '#f59e0b';
+                                            e.currentTarget.style.display = 'flex';
+                                            e.currentTarget.style.alignItems = 'center';
+                                            e.currentTarget.style.justifyContent = 'center';
+                                            e.currentTarget.innerHTML = '<div style="color: white; text-align: center; font-family: serif; font-size: 18px; font-weight: bold;">🏆<br/>Nederlandse<br/>Horeca Prijzen<br/>2025/2026</div>';
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </AnimatedSection>
+
+
 
         </div>
     );

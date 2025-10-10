@@ -3,6 +3,7 @@ import { MenuCategory, Review } from './types';
 export const RESTAURANT_PHONE = "+31644562722";
 export const RESTAURANT_PHONE_INTL = "31644562722";
 export const FACEBOOK_URL = "https://www.facebook.com/share/1LKKmRgLA1/";
+export const INSTAGRAM_URL = "https://www.instagram.com/leniwababa_polskarestauracja?igsh=MW51MHN0d3lxMzhhYw==";
 export const GOOGLE_REVIEWS_URL = "https://share.google/xASWsAlylptATLTxL";
 
 export const MENU_DATA: MenuCategory[] = [
@@ -132,8 +133,9 @@ export interface TeamMember {
 }
 
 export const TEAM_DATA: TeamMember[] = [
-  { nameKey: 'team_chef_name', imageId: 'szef kuchni Carlo Couto Martins.jpg', positionKey: 'team_chef_position' },
-  { nameKey: 'team_waiter_name', imageId: 'zespol-waiter.jpg', positionKey: 'team_waiter_position' },
-  { nameKey: 'team_manager_name', imageId: 'zespol-manager.jpg', positionKey: 'team_manager_position' },
-  { nameKey: 'team_bartender_name', imageId: 'zespol-bartender.jpg', positionKey: 'team_bartender_position' },
+  { nameKey: 'team_owner_name', imageId: 'zespol-szefowa.jpg', positionKey: 'team_owner_position' },
+  { nameKey: 'team_chef_name', imageId: 'zespol-szef-kuchni.jpg', positionKey: 'team_chef_position' },
+  { nameKey: 'team_waiter_name', imageId: 'Szefowa Sali.jpg', positionKey: 'team_waiter_position' },
+  { nameKey: 'team_manager_name', imageId: 'Menedżer — kopia.jpg', positionKey: 'team_manager_position' },
+  { nameKey: 'team_bartender_name', imageId: 'Szefowa Baru.jpg', positionKey: 'team_bartender_position' },
 ];
