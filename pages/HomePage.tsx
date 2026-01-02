@@ -88,7 +88,6 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
     const [flippedCards, setFlippedCards] = useState(new Set<number>());
     const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
     const [scrollY, setScrollY] = useState(0);
-    const [currentAdIndex, setCurrentAdIndex] = useState(0);
     const [playingVideos, setPlayingVideos] = useState(new Set<number>());
     const heroRef = useRef<HTMLDivElement>(null);
 
@@ -141,15 +140,6 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
         }, 5000); // Change team member every 5 seconds
 
         return () => clearInterval(teamCarouselInterval);
-    }, []);
-
-    // Advertisements carousel effect
-    useEffect(() => {
-        const adCarouselInterval = setInterval(() => {
-            setCurrentAdIndex(prev => (prev + 1) % ADVERTISEMENTS_DATA.length);
-        }, 6000); // Change ad every 6 seconds
-
-        return () => clearInterval(adCarouselInterval);
     }, []);
 
     const nextOccasion = useCallback(() => {
@@ -677,26 +667,12 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
 
                 <div className="relative max-w-6xl mx-auto">
                     <div className="flex justify-center">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 w-full px-4">
                             {ADVERTISEMENTS_DATA.map((ad, index) => {
-                                const offset = (index - currentAdIndex + ADVERTISEMENTS_DATA.length) % ADVERTISEMENTS_DATA.length;
-                                const isCenter = offset === 0;
-                                const isLeft = offset === ADVERTISEMENTS_DATA.length - 1;
-                                const isRight = offset === 1;
-                                const isVisible = isCenter || isLeft || isRight;
-
                                 return (
                                     <div
                                         key={ad.id}
-                                        className={`transition-all duration-700 transform ${
-                                            !isVisible ? 'hidden md:block opacity-0 scale-75' : 
-                                            isCenter ? 'opacity-100 scale-105 ring-4 ring-folk-blue shadow-2xl shadow-folk-blue/50' :
-                                            'opacity-70 scale-95'
-                                        } ${isCenter ? 'z-20' : 'z-10'}`}
-                                        style={{
-                                            transform: !isVisible ? 'scale(0.75)' :
-                                                     isCenter ? 'scale(1.05)' : 'scale(0.95)'
-                                        }}
+                                        className="transition-all duration-500"
                                     >
                                         <div 
                                             className="relative w-full max-w-sm mx-auto aspect-[9/16] sm:aspect-[3/4] rounded-lg overflow-hidden shadow-lg group cursor-pointer bg-gray-900"
@@ -763,22 +739,6 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                 );
                             })}
                         </div>
-                    </div>
-
-                    {/* Indicators */}
-                    <div className="flex justify-center mt-8 space-x-2">
-                        {ADVERTISEMENTS_DATA.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentAdIndex(index)}
-                                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                                    index === currentAdIndex 
-                                        ? 'bg-folk-blue scale-125 ring-2 ring-white/50' 
-                                        : 'bg-gray-400 hover:bg-gray-600'
-                                }`}
-                                aria-label={`Przejdź do reklamy ${index + 1}`}
-                            />
-                        ))}
                     </div>
                 </div>
             </AnimatedSection>
