@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
           </a>
           
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4 text-text-dark dark:text-text-light">
+          <nav className="hidden lg:flex items-center space-x-4 text-white [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%)]">
             {navLinks.map(link => (
               <a key={link.href} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className={linkClasses}>{link.label}</a>
             ))}
@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
             <button 
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className="text-text-dark dark:text-text-light"
+              className="text-white drop-shadow-lg"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               title={isMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
       {/* Mobile Navigation */}
       <div className={`lg:hidden transition-all duration-500 ease-in-out overflow-hidden ${isMenuOpen ? 'max-h-screen' : 'max-h-0'}`}>
         <div className={`${mobileMenuBg} backdrop-blur-lg px-4 pt-2 pb-4`}>
-            <nav className="flex flex-col items-center space-y-4 text-text-dark dark:text-text-light">
+            <nav className="flex flex-col items-center space-y-4 text-white [text-shadow:_1px_1px_2px_rgb(0_0_0_/_80%)]">
             {navLinks.map(link => (
                 <a key={link.href} href={link.href} className={linkClasses} onClick={(e) => handleNavClick(e, link.href)}>{link.label}</a>
             ))}

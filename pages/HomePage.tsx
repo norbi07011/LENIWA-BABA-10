@@ -96,10 +96,10 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
     }, []);
     
     const heroOverlayBg = {
-        light: 'bg-primary-light/30',
-        dark: 'bg-primary-dark/80',
-        wood: 'bg-primary-dark/80',
-        flower: 'bg-primary-dark/80',
+        light: 'bg-black/60',
+        dark: 'bg-black/70',
+        wood: 'bg-black/70',
+        flower: 'bg-black/70',
     }[theme];
 
     const aboutUsBg = {
@@ -193,7 +193,7 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                     <h1 className="text-5xl md:text-7xl font-bold text-gradient-premium font-serif mb-4 text-premium-glow reveal-up">
                         {t('restaurant_name')}
                     </h1>
-                    <p className="text-xl md:text-2xl text-text-dark dark:text-text-light mt-4 h-8 [text-shadow:_1px_1px_2px_rgb(0_0_0_/_70%)] reveal-up delay-200">
+                    <p className="text-xl md:text-2xl text-white mt-4 h-8 [text-shadow:_2px_2px_4px_rgb(0_0_0_/_90%)] reveal-up delay-200">
                         <Typewriter text={t('slogan')} />
                     </p>
                     <a
@@ -289,8 +289,8 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                 </div>
                             </div>
                             <div>
-                                <h2 className="text-4xl font-bold text-text-dark dark:text-white font-serif mb-4 drop-shadow-lg">{t('about_us_title')}</h2>
-                                <p className="text-lg text-text-dark dark:text-white leading-relaxed drop-shadow-lg">{t('about_us_text')}</p>
+                                <h2 className="text-4xl font-bold text-white font-serif mb-4 drop-shadow-lg">{t('about_us_title')}</h2>
+                                <p className="text-lg text-white leading-relaxed drop-shadow-lg">{t('about_us_text')}</p>
                             </div>
                         </div>
                     </div>
