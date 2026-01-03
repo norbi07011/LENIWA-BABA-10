@@ -337,26 +337,28 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                     </p>
                 </div>
                 
-                <div className="relative flex justify-center items-center h-[24rem] sm:h-[28rem] md:h-[32rem]">
-                    {/* Navigation Buttons - Premium Style */}
-                    <button 
-                        onClick={prevTeamMember} 
-                        className="absolute left-0 sm:left-2 md:-left-12 z-30 glass-card p-2 sm:p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
-                        title="Poprzedni członek zespołu"
-                        aria-label="Poprzedni członek zespołu"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                    </button>
-                    <button 
-                        onClick={nextTeamMember} 
-                        className="absolute right-0 sm:right-2 md:-right-12 z-30 glass-card p-2 sm:p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
-                        title="Następny członek zespołu"
-                        aria-label="Następny członek zespołu"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </button>
+                <div className="flex flex-col items-center">
+                    {/* Carousel Container with Navigation */}
+                    <div className="relative w-full h-[20rem] sm:h-[24rem] md:h-[28rem]">
+                        {/* Navigation Buttons - Premium Style */}
+                        <button 
+                            onClick={prevTeamMember} 
+                            className="absolute left-0 sm:left-2 md:-left-12 top-1/2 -translate-y-1/2 z-30 glass-card p-2 sm:p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
+                            title="Poprzedni członek zespołu"
+                            aria-label="Poprzedni członek zespołu"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button 
+                            onClick={nextTeamMember} 
+                            className="absolute right-0 sm:right-2 md:-right-12 top-1/2 -translate-y-1/2 z-30 glass-card p-2 sm:p-3 rounded-full text-white hover:scale-110 transition-all duration-300 hover:ring-2 hover:ring-folk-red/50 backdrop-blur-md"
+                            title="Następny członek zespołu"
+                            aria-label="Następny członek zespołu"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        </button>
 
-                    <div className="relative w-full h-full [perspective:1500px]">
+                        <div className="relative w-full h-full [perspective:1500px]">
                         {TEAM_DATA.map((member, index) => {
                             const offset = (index - currentTeamIndex + TEAM_DATA.length) % TEAM_DATA.length;
                             const isCenter = offset === 0;
@@ -454,10 +456,11 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                 </div>
                             );
                         })}
+                        </div>
                     </div>
 
                     {/* Team member indicators - Premium Style */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 glass-card px-4 py-2 rounded-full backdrop-blur-md">
+                    <div className="mt-6 flex gap-3 glass-card px-4 py-2 rounded-full backdrop-blur-md">
                         {TEAM_DATA.map((_, index) => (
                             <button
                                 key={index}

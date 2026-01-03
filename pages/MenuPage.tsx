@@ -134,7 +134,7 @@ const LightboxModal: React.FC<{ item: MenuItem; onClose: () => void }> = ({ item
                         className="w-full h-full object-cover"
                         onError={(e) => {
                             console.error(`Failed to load image: /images/${item.imageIds[currentImageIndex]}`);
-                            e.currentTarget.src = 'https://via.placeholder.com/400x400?text=No+Image';
+                            e.currentTarget.style.display = 'none';
                         }}
                     />
                     {item.imageIds.length > 1 && (
@@ -274,7 +274,7 @@ export const MenuPage: React.FC<PageProps> = ({ id }) => {
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 onError={(e) => {
                                                     console.error(`Failed to load thumbnail: /images/${item.imageIds[0]}`);
-                                                    e.currentTarget.src = 'https://via.placeholder.com/200x200?text=No+Image';
+                                                    e.currentTarget.style.display = 'none';
                                                 }}
                                             />
                                         </div>
