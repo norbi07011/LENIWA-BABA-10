@@ -17,7 +17,7 @@ const AppContent: React.FC = () => {
     return (
         <div className="bg-primary-light overflow-x-hidden text-text-dark transition-colors duration-500">
             <Header />
-            <main>
+            <main className="pt-20">
                 <HomePage id="home" />
                 <MenuPage id="menu" />
                 <ReviewsPage id="reviews" />
