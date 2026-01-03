@@ -395,45 +395,60 @@ export const HomePage: React.FC<PageProps> = ({ id }) => {
                                     }}
                                 >
                                     <div className="flex justify-center items-center h-full">
+                                        {/* Modern Elegant Card Design */}
                                         <div 
-                                            className="relative w-72 h-80 rounded-2xl shadow-2xl transition-all duration-700 bg-white border-2 border-folk-red/30 hover:border-folk-red/60 overflow-hidden"
+                                            className="relative w-72 h-[22rem] rounded-3xl shadow-2xl transition-all duration-700 overflow-hidden group"
                                             style={{ 
                                                 transform: `scale(${scale})`,
-                                                backgroundImage: "url('/images/TŁO MENU.png')",
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center'
                                             }}
                                         >
-                                            {/* Dark overlay for better text readability */}
-                                            <div className="absolute inset-0 bg-black/30"></div>
-                                            
-                                            {/* Folklor decorative corners */}
-                                            <FlowerArtCorner className="absolute top-2 left-2 w-12 h-12 text-folk-red/40 pointer-events-none z-20" />
-                                            <FlowerArtCorner className="absolute top-2 right-2 w-12 h-12 text-folk-red/40 pointer-events-none transform rotate-90 z-20" />
-                                            <FlowerArtCorner className="absolute bottom-2 left-2 w-12 h-12 text-folk-red/40 pointer-events-none transform -rotate-90 z-20" />
-                                            <FlowerArtCorner className="absolute bottom-2 right-2 w-12 h-12 text-folk-red/40 pointer-events-none transform rotate-180 z-20" />
-
-                                            {/* Member Photo - Circular Avatar */}
-                                            <div className="relative z-10 p-6 h-full flex flex-col items-center justify-center text-center">
-                                                <div className="w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-folk-red/50 mb-4">
-                                                    <img 
-                                                        src={`/images/${member.imageId}`} 
-                                                        alt={t(member.nameKey)} 
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            console.error(`Failed to load team member image: /images/${member.imageId}`);
-                                                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(t(member.nameKey))}&size=128&background=8B4513&color=fff&bold=true`;
-                                                        }}
-                                                    />
-                                                </div>
-                                                
-                                                {/* Member Info */}
-                                                <div className="text-text-dark">
-                                                    <h3 className="text-xl font-bold font-serif mb-2 drop-shadow-lg">
-                                                        {t(member.positionKey)}
-                                                    </h3>
-                                                </div>
+                                            {/* Full Background Image */}
+                                            <div className="absolute inset-0">
+                                                <img 
+                                                    src={`/images/${member.imageId}`} 
+                                                    alt={t(member.nameKey)} 
+                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                    onError={(e) => {
+                                                        console.error(`Failed to load team member image: /images/${member.imageId}`);
+                                                        e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(t(member.nameKey))}&size=400&background=8B4513&color=fff&bold=true`;
+                                                    }}
+                                                />
                                             </div>
+                                            
+                                            {/* Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                                            
+                                            {/* Decorative Border */}
+                                            <div className="absolute inset-0 rounded-3xl border-2 border-white/20 group-hover:border-folk-red/50 transition-colors duration-500"></div>
+                                            
+                                            {/* Top Accent Line */}
+                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-folk-red to-transparent rounded-full"></div>
+                                            
+                                            {/* Content at Bottom */}
+                                            <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+                                                {/* Position Title */}
+                                                <h3 className="text-2xl font-bold font-serif text-white drop-shadow-lg">
+                                                    {t(member.positionKey)}
+                                                </h3>
+
+                                                {/* Website Link Button */}
+                                                {member.link && (
+                                                    <a
+                                                        href={member.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-folk-red to-folk-red/80 text-white rounded-full text-sm font-semibold shadow-lg hover:scale-105 hover:shadow-xl hover:shadow-folk-red/30 transition-all duration-300"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                        {t('visit_website')}
+                                                    </a>
+                                                )}
+                                            </div>
+                                            
+                                            {/* Hover Glow Effect */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl shadow-[inset_0_0_30px_rgba(185,28,28,0.3)]"></div>
                                         </div>
                                     </div>
                                 </div>

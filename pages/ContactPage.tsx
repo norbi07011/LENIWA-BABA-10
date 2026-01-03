@@ -72,11 +72,14 @@ export const ContactPage: React.FC<PageProps> = ({ id }) => {
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span>{t('opening_hours_restaurant')}</span>
-                                        <span className="font-semibold">16:00 – 22:00</span>
+                                        <span className="font-semibold">16:00 – 23:00</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span>{t('opening_hours_kitchen')}</span>
                                         <span className="font-semibold">{t('kitchen_hours_close')}</span>
+                                    </div>
+                                    <div className="text-folk-red font-semibold text-center mt-2">
+                                        {t('monday_closed')}
                                     </div>
                                 </div>
                              </ContactCard>

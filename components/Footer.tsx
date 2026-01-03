@@ -113,8 +113,8 @@ export const Footer: React.FC = () => {
                                 <span className="text-xl">📞</span>
                                 <div>
                                     <div className="font-semibold text-text-dark">Telefon</div>
-                                    <a href="tel:+31704272052" className="hover:text-folk-red transition-colors">
-                                        +31 70 427 2052
+                                    <a href="tel:+31649023357" className="hover:text-folk-red transition-colors">
+                                        +31 6 49 02 33 57
                                     </a>
                                 </div>
                             </li>
@@ -131,7 +131,8 @@ export const Footer: React.FC = () => {
                                 <span className="text-xl">🕐</span>
                                 <div>
                                     <div className="font-semibold text-text-dark">Godziny otwarcia</div>
-                                    <div>Wt-Nd: 12:00 - 22:00</div>
+                                    <div>Wt-Nd: 16:00 - 23:00</div>
+                                    <div className="text-sm text-slate-600">Kuchnia czynna do 21:00</div>
                                     <div className="text-folk-red font-semibold">Poniedziałek nieczynne</div>
                                 </div>
                             </li>

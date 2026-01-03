@@ -1,7 +1,7 @@
 import { MenuCategory, Review } from './types';
 
-export const RESTAURANT_PHONE = "+31644562722";
-export const RESTAURANT_PHONE_INTL = "31644562722";
+export const RESTAURANT_PHONE = "+31649023357";
+export const RESTAURANT_PHONE_INTL = "31649023357";
 export const FACEBOOK_URL = "https://www.facebook.com/share/1LKKmRgLA1/";
 export const INSTAGRAM_URL = "https://www.instagram.com/leniwababa_polskarestauracja?igsh=MW51MHN0d3lxMzhhYw==";
 export const GOOGLE_REVIEWS_URL = "https://share.google/xASWsAlylptATLTxL";
@@ -130,6 +130,7 @@ export interface TeamMember {
   nameKey: string;
   imageId: string;
   positionKey: string;
+  link?: string;
 }
 
 export const TEAM_DATA: TeamMember[] = [
@@ -138,4 +139,5 @@ export const TEAM_DATA: TeamMember[] = [
   { nameKey: 'team_waiter_name', imageId: 'Szefowa Sali.jpg', positionKey: 'team_waiter_position' },
   { nameKey: 'team_manager_name', imageId: 'Menedżer — kopia.jpg', positionKey: 'team_manager_position' },
   { nameKey: 'team_bartender_name', imageId: 'Szefowa Baru.jpg', positionKey: 'team_bartender_position' },
+  { nameKey: 'team_norbsservice_name', imageId: 'Norbsservice.jpeg', positionKey: 'team_norbsservice_position', link: 'https://norbsservice.nl' },
 ];
