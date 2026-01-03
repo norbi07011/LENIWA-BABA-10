@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
-import { RESTAURANT_PHONE_INTL, RESTAURANT_PHONE, FACEBOOK_URL } from '../constants';
+import { WHATSAPP_RESERVATION_PHONE, RESTAURANT_PHONE, FACEBOOK_URL } from '../constants';
 import { AnimatedSection } from '../components/AnimatedSection';
 import { FolkArtFlourish, FolkArtCorner, FlowerArtCorner } from '../components/icons/FolkArtIcons';
 
@@ -79,7 +79,7 @@ const ClassicReservationForm: React.FC = () => {
                 `${t('form_phone')}: ${formData.phone}\n` +
                 `${t('special_requests')}: ${formData.special || t('none')}`;
             
-            const whatsappUrl = `https://wa.me/${RESTAURANT_PHONE_INTL}?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/${WHATSAPP_RESERVATION_PHONE}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         } catch (error) {
             console.error('Error creating WhatsApp message:', error);

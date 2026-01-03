@@ -2,6 +2,7 @@ import { MenuCategory, Review } from './types';
 
 export const RESTAURANT_PHONE = "+31649023357";
 export const RESTAURANT_PHONE_INTL = "31649023357";
+export const WHATSAPP_RESERVATION_PHONE = "31644562722"; // Numer dla rezerwacji WhatsApp
 export const FACEBOOK_URL = "https://www.facebook.com/share/1LKKmRgLA1/";
 export const INSTAGRAM_URL = "https://www.instagram.com/leniwababa_polskarestauracja?igsh=MW51MHN0d3lxMzhhYw==";
 export const GOOGLE_REVIEWS_URL = "https://share.google/xASWsAlylptATLTxL";
