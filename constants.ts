@@ -6,6 +6,42 @@ export const WHATSAPP_RESERVATION_PHONE = "31644562722"; // Numer dla rezerwacji
 export const FACEBOOK_URL = "https://www.facebook.com/share/1LKKmRgLA1/";
 export const INSTAGRAM_URL = "https://www.instagram.com/leniwababa_polskarestauracja?igsh=MW51MHN0d3lxMzhhYw==";
 export const GOOGLE_REVIEWS_URL = "https://share.google/xASWsAlylptATLTxL";
+export const EMAIL = "info@leniwababa.nl";
+export const ADDRESS_LINE_1 = "Fahrenheitstraat 22";
+export const ADDRESS_LINE_2 = "2561 EC Den Haag";
+export const ADDRESS = `${ADDRESS_LINE_1}, ${ADDRESS_LINE_2}`;
+export const HORECA_AWARDS_URL = "https://www.horecaprijzen.nl/pools-restaurant-leniwa-baba";
+export const NORBS_URL = "https://norbsservice.nl";
+
+/** Opening hours. day: 0 = Sunday … 6 = Saturday. "24:00" means midnight. */
+export interface DayHours { open: string; close: string; kitchenOpen: string; kitchenClose: string; }
+export const OPENING_HOURS: Record<number, DayHours | null> = {
+  0: { open: "12:00", close: "21:30", kitchenOpen: "12:00", kitchenClose: "20:00" },
+  1: null,
+  2: { open: "16:00", close: "23:00", kitchenOpen: "16:00", kitchenClose: "21:00" },
+  3: { open: "16:00", close: "23:00", kitchenOpen: "16:00", kitchenClose: "21:00" },
+  4: { open: "16:00", close: "23:00", kitchenOpen: "16:00", kitchenClose: "21:00" },
+  5: { open: "16:00", close: "23:00", kitchenOpen: "16:00", kitchenClose: "21:00" },
+  6: { open: "12:00", close: "24:00", kitchenOpen: "12:00", kitchenClose: "21:00" },
+};
+
+export const HERO_IMAGES = ['okładka strony.jpg', 'okładka strony3.jpg', 'okładka strony4.jpg', 'OKŁADKA STRONY 2.jpg', 'okładka strony5.jpg', 'okładka strony7.jpg', 'okładka strony9.jpg'];
+
+/** Dishes told as a scroll story, in order. */
+export const SIGNATURE_DISHES = [
+  { name: 'zurek_slaski', description: 'zurek_slaski_desc', image: 'Żurek śląski.jpg' },
+  { name: 'rolada_slaska', description: 'rolada_slaska_desc', image: 'Rolada śląska.jpg' },
+  { name: 'pierogi_miesem', description: 'pierogi_miesem_desc', image: 'Pierogi z mięsem.jpg' },
+  { name: 'golonko_piwie', description: 'golonko_piwie_desc', image: 'Golonko w piwie.jpg' },
+  { name: 'szarlotka', description: 'szarlotka_desc', image: 'Szarlotka na ciepło.jpg' },
+];
+
+export const ADVERTISEMENTS = [
+  { id: 1, titleKey: 'ad_weekend_title', descKey: 'ad_weekend_desc', video: 'videos/weekendowa-promocja.mp4', poster: 'videos/weekendowa-promocja-poster.jpg' },
+  { id: 2, titleKey: 'ad_tradition_title', descKey: 'ad_tradition_desc', video: 'videos/smak-tradycji.mp4', poster: 'videos/smak-tradycji.jpg' },
+  { id: 3, titleKey: 'ad_contest_title', descKey: 'ad_contest_desc', video: 'videos/konkurs.mp4', poster: 'videos/konkurs.jpg' },
+  { id: 4, titleKey: 'ad_xmas_title', descKey: 'ad_xmas_desc', video: 'SWIETA2025.mp4', poster: 'SWIETA2025.png' },
+];
 
 export const MENU_DATA: MenuCategory[] = [
   {
@@ -140,5 +176,5 @@ export const TEAM_DATA: TeamMember[] = [
   { nameKey: 'team_waiter_name', imageId: 'Szefowa Sali.jpg', positionKey: 'team_waiter_position' },
   { nameKey: 'team_manager_name', imageId: 'Menedżer — kopia.jpg', positionKey: 'team_manager_position' },
   { nameKey: 'team_bartender_name', imageId: 'Szefowa Baru.jpg', positionKey: 'team_bartender_position' },
-  { nameKey: 'team_norbsservice_name', imageId: 'Norbsservice.jpeg', positionKey: 'team_norbsservice_position', link: 'https://norbsservice.nl' },
+  { nameKey: 'team_norbsservice_name', imageId: 'Norbsservice.jpeg', positionKey: 'team_norbsservice_position', link: NORBS_URL },
 ];

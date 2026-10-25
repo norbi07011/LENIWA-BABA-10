@@ -1,5 +1,5 @@
-import React from 'react';
-import { AppProvider, AppContext } from './contexts/AppContext';
+import React, { useEffect, useState } from 'react';
+import { AppProvider } from './contexts/AppContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
@@ -7,34 +7,74 @@ import { MenuPage } from './pages/MenuPage';
 import { ReviewsPage } from './pages/ReviewsPage';
 import { ReservationPage } from './pages/ReservationPage';
 import { ContactPage } from './pages/ContactPage';
+import { Team, Occasions, Award, Videos } from './components/sections/House';
+import { ScrollProgressBar } from './components/fx/core';
+import { ParticleIntro } from './components/fx/canvas';
 import { useAppContext } from './hooks/useAppContext';
+import { initSmoothScroll, lockScroll, prefersReducedMotion } from './lib/motion';
 
-interface PageProps {
-  id: string;
-}
+const INTRO_KEY = 'lb-intro-seen';
+
+const shouldPlayIntro = () => {
+    if (prefersReducedMotion()) return false;
+    try {
+        return sessionStorage.getItem(INTRO_KEY) !== '1';
+    } catch {
+        return false;
+    }
+};
 
 const AppContent: React.FC = () => {
-    return (
-        <div className="bg-primary-light overflow-x-hidden text-text-dark transition-colors duration-500">
-            <Header />
-            <main className="pt-20">
-                <HomePage id="home" />
-                <MenuPage id="menu" />
-                <ReviewsPage id="reviews" />
-                <ReservationPage id="reservation" />
-                <ContactPage id="contact" />
-            </main>
-            <Footer />
-        </div>
-    );
-}
+    const { t } = useAppContext();
+    const [intro, setIntro] = useState(shouldPlayIntro);
 
-const App: React.FC = () => {
-  return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
-  );
+    useEffect(() => {
+        initSmoothScroll();
+    }, []);
+
+    useEffect(() => {
+        if (!intro) return;
+        lockScroll(true);
+        return () => lockScroll(false);
+    }, [intro]);
+
+    const endIntro = () => {
+        try {
+            sessionStorage.setItem(INTRO_KEY, '1');
+        } catch {
+            /* ignore */
+        }
+        setIntro(false);
+    };
+
+    return (
+        <>
+            {intro && <ParticleIntro text="Leniwa Baba" tagline={t('intro_tagline')} skipLabel={t('intro_skip')} onDone={endIntro} />}
+            <ScrollProgressBar />
+            <div className="grain" aria-hidden="true" />
+            <Header />
+            <div id="shell">
+                <main>
+                    <HomePage ready={!intro} />
+                    <MenuPage id="menu" />
+                    <Team />
+                    <Occasions />
+                    <Award />
+                    <Videos />
+                    <ReviewsPage id="reviews" />
+                    <ReservationPage id="reservation" />
+                    <ContactPage id="contact" />
+                </main>
+                <Footer />
+            </div>
+        </>
+    );
 };
+
+const App: React.FC = () => (
+    <AppProvider>
+        <AppContent />
+    </AppProvider>
+);
 
 export default App;

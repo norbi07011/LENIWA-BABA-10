@@ -1,186 +1,104 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
-import { FACEBOOK_URL, INSTAGRAM_URL } from '../constants';
+import {
+  ADDRESS_LINE_1,
+  ADDRESS_LINE_2,
+  EMAIL,
+  FACEBOOK_URL,
+  INSTAGRAM_URL,
+  NORBS_URL,
+  RESTAURANT_PHONE,
+} from '../constants';
+import { OpeningHours } from './OpeningHours';
+import { useScrollFrame } from './fx/core';
+import { IconFacebook, IconInstagram } from './icons/ui';
 
-const AnimatedFacebookButton: React.FC = () => {
-    const FacebookLogo = () => (
-        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">
-            <path d="M9.197 22v-9.197H6v-3.622h3.197V6.442c0-3.18 1.893-4.94 4.808-4.94 1.372 0 2.863.26 2.863.26v3.138h-1.85c-1.54 0-2.022.928-2.022 1.986v2.35h3.58l-.57 3.622h-3.01V22h-4.22z" />
-        </svg>
-    );
-
-    return (
-        <a
-            href={FACEBOOK_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-center bg-[#1877F2] text-white rounded-full h-12 w-12 hover:scale-110 transition-all duration-300 ease-in-out"
-            aria-label="Facebook"
-        >
-            <FacebookLogo />
-        </a>
-    );
-}
-
-const InstagramButton: React.FC = () => {
-    return (
-        <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-center text-white rounded-full h-12 w-12 hover:scale-110 transition-all duration-300 ease-in-out relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500"
-            aria-label="Instagram"
-        >
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current relative z-10">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-            </svg>
-        </a>
-    );
-}
+const formatPhone = (p: string) => p.replace(/^\+31(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/, '+31 $1 $2 $3 $4 $5');
 
 export const Footer: React.FC = () => {
-    const { t } = useAppContext();
-    const quickLinks = [
-        { href: '#home', label: t('nav_home'), icon: '🏠' },
-        { href: '#menu', label: t('nav_menu'), icon: '🍽️' },
-        { href: '#reviews', label: t('nav_reviews'), icon: '⭐' },
-        { href: '#reservation', label: t('nav_reservation'), icon: '📅' },
-        { href: '#contact', label: t('nav_contact'), icon: '📞' },
-    ];
+  const { t } = useAppContext();
+  const fillRef = useRef<HTMLDivElement>(null);
 
-    return (
-        <footer className="bg-gradient-to-b from-slate-50 to-slate-100 text-text-dark-secondary relative overflow-hidden">
-            {/* Decorative Wave */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-folk-red via-folk-pink to-folk-red"></div>
-            
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center md:text-left mb-12">
-                    {/* Logo & About */}
-                    <div className="md:col-span-2 lg:col-span-1 flex flex-col items-center md:items-start">
-                        <a 
-                            href="#home" 
-                            className="text-3xl font-bold text-gradient-premium font-serif hover:scale-105 transition-transform duration-300 inline-block"
-                        >
-                            Leniwa Baba
-                        </a>
-                        <p className="mt-3 text-folk-red font-bold text-lg">{t('slogan')}</p>
-                        <p className="mt-3 text-sm text-text-dark-secondary leading-relaxed max-w-xs">
-                            Autentyczna polska kuchnia w sercu Hagi. Tradycyjne smaki, domowa atmosfera.
-                        </p>
-                        
-                        {/* Social Media */}
-                        <div className="mt-6 flex gap-4 justify-center md:justify-start">
-                            <AnimatedFacebookButton />
-                            <InstagramButton />
-                        </div>
-                    </div>
+  // Scroll-driven text fill: the wordmark fills with beetroot red as you reach the end of the page
+  useScrollFrame(() => {
+    const el = fillRef.current;
+    if (!el) return;
+    // 0 when the word enters at the bottom of the screen, 1 once it has fully risen into view
+    const r = el.getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (window.innerHeight - r.top) / (r.height + 60)));
+    el.style.setProperty('--fill', f.toFixed(3));
+  });
 
-                    {/* Quick Links */}
-                    <div>
-                        <h3 className="text-lg font-semibold text-text-dark mb-6 uppercase tracking-wider">
-                            {t('quick_links')}
-                        </h3>
-                        <ul className="space-y-3">
-                            {quickLinks.map(link => (
-                                <li key={link.href}>
-                                    <a 
-                                        href={link.href} 
-                                        className="group flex items-center justify-center md:justify-start gap-3 hover:text-folk-red transition-all duration-300 p-2 rounded-lg hover:bg-white/5 hover:translate-x-1"
-                                    >
-                                        <span className="text-xl group-hover:scale-125 transition-transform duration-300">{link.icon}</span>
-                                        <span>{link.label}</span>
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+  const links = [
+    { href: '#home', label: t('nav_home') },
+    { href: '#menu', label: t('nav_menu') },
+    { href: '#reviews', label: t('nav_reviews') },
+    { href: '#reservation', label: t('nav_reservation') },
+    { href: '#contact', label: t('nav_contact') },
+  ];
 
-                    {/* Contact Info */}
-                    <div>
-                        <h3 className="text-lg font-semibold text-text-dark mb-6 uppercase tracking-wider">
-                            Kontakt
-                        </h3>
-                        <ul className="space-y-4 text-sm">
-                            <li className="flex items-start justify-center md:justify-start gap-3">
-                                <span className="text-xl">📍</span>
-                                <div>
-                                    <div className="font-semibold text-text-dark">Adres</div>
-                                    <div>Gedempte Gracht 42</div>
-                                    <div>2512 CA Den Haag</div>
-                                </div>
-                            </li>
-                            <li className="flex items-start justify-center md:justify-start gap-3">
-                                <span className="text-xl">📞</span>
-                                <div>
-                                    <div className="font-semibold text-text-dark">Telefon</div>
-                                    <a href="tel:+31649023357" className="hover:text-folk-red transition-colors">
-                                        +31 6 49 02 33 57
-                                    </a>
-                                </div>
-                            </li>
-                            <li className="flex items-start justify-center md:justify-start gap-3">
-                                <span className="text-xl">✉️</span>
-                                <div>
-                                    <div className="font-semibold text-text-dark">Email</div>
-                                    <a href="mailto:info@leniwababa.nl" className="hover:text-folk-red transition-colors">
-                                        info@leniwababa.nl
-                                    </a>
-                                </div>
-                            </li>
-                            <li className="flex items-start justify-center md:justify-start gap-3">
-                                <span className="text-xl">🕐</span>
-                                <div>
-                                    <div className="font-semibold text-text-dark">Godziny otwarcia</div>
-                                    <div>Wt-Pt: 16:00 - 23:00</div>
-                                    <div className="text-sm text-slate-600">Kuchnia czynna do 21:00</div>
-                                    <div className="mt-1">Sobota: kuchnia 12:00 - 21:00</div>
-                                    <div className="text-sm text-slate-600">Bar czynny do 24:00</div>
-                                    <div className="mt-1">Niedziela: kuchnia 12:00 - 20:00</div>
-                                    <div className="text-sm text-slate-600">Bar czynny do 21:30</div>
-                                    <div className="text-folk-red font-semibold">Poniedziałek nieczynne</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Additional Info */}
-                    <div className="md:col-span-2 lg:col-span-1">
-                        <h3 className="text-lg font-semibold text-text-dark mb-6 uppercase tracking-wider">
-                            Informacje
-                        </h3>
-                        <ul className="space-y-3 text-sm">
-                            <li>
-                                <a href="#" className="hover:text-folk-red transition-colors duration-300">
-                                    Polityka prywatności
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-folk-red transition-colors duration-300">
-                                    Regulamin
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-folk-red transition-colors duration-300">
-                                    Polityka cookies
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="border-t border-slate-300 pt-8 text-center">
-                    <p className="text-sm text-slate-500">
-                        © {new Date().getFullYear()} <span className="font-bold text-text-dark">Leniwa Baba</span>. Wszystkie prawa zastrzeżone.
-                    </p>
-                    <div className="flex items-center justify-center gap-2 mt-4 text-sm">
-                        <span>Made with</span>
-                        <span className="text-folk-red text-xl animate-pulse">❤️</span>
-                        <span>in Poland & Netherlands</span>
-                    </div>
-                </div>
+  return (
+    <footer className="site-footer">
+      <div className="wrap">
+        <div className="footer-grid">
+          <div>
+            <div className="wordmark" style={{ fontSize: 34 }}>Leniwa Baba</div>
+            <p className="lede" style={{ fontSize: 15, marginTop: 12 }}>{t('footer_about')}</p>
+            <div className="social" aria-label={t('footer_follow')}>
+              <a className="icon-btn" href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <IconFacebook />
+              </a>
+              <a className="icon-btn" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <IconInstagram />
+              </a>
             </div>
-        </footer>
-    );
-}
+          </div>
+          <div>
+            <h4>{t('quick_links')}</h4>
+            <ul>
+              {links.map((l) => (
+                <li key={l.href}>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h4>{t('nav_contact')}</h4>
+            <ul>
+              <li>
+                {ADDRESS_LINE_1}
+                <br />
+                {ADDRESS_LINE_2}
+              </li>
+              <li>
+                <a href={`tel:${RESTAURANT_PHONE}`} className="mono">{formatPhone(RESTAURANT_PHONE)}</a>
+              </li>
+              <li>
+                <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>{t('opening_hours')}</h4>
+            <OpeningHours compact />
+          </div>
+        </div>
 
+        <div ref={fillRef} className="fill-text" aria-hidden="true">
+          Leniwa Baba
+        </div>
+
+        <div className="footer-bottom">
+          <span>{t('copyright')}</span>
+          <span>
+            {t('footer_site_by')}{' '}
+            <a href={NORBS_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--cream)' }}>
+              NORBS SERVICE
+            </a>
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+};

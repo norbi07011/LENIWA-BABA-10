@@ -1,335 +1,214 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
 import { MENU_DATA, FACEBOOK_URL } from '../constants';
 import { MenuItem } from '../types';
 import { SoupIcon, MainCourseIcon, AppetizerIcon, DessertIcon, DrinkIcon } from '../components/icons/MenuIcons';
-import { FacebookIcon } from '../components/icons/SocialIcons';
-import { AnimatedSection } from '../components/AnimatedSection';
-import { FolkArtCorner, FolkArtFlourish, FlowerArtCorner } from '../components/icons/FolkArtIcons';
+import { Magnetic, Reveal, SplitText, TiltCard, ZoomLens } from '../components/fx/core';
+import { flyToTray } from '../components/fx/canvas';
+import { IconArrowLeft, IconArrow, IconCheck, IconClose, IconFacebook, IconPlus } from '../components/icons/ui';
+import { img, lockScroll, withViewTransition } from '../lib/motion';
 
-interface PageProps {
-  id: string;
-}
+const categoryIcons: Record<string, React.FC<{ className?: string }>> = {
+    category_soups: SoupIcon,
+    category_main_courses: MainCourseIcon,
+    category_appetizers: AppetizerIcon,
+    category_desserts: DessertIcon,
+    category_drinks: DrinkIcon,
+};
 
-const IngredientsModal: React.FC<{ item: MenuItem; onClose: () => void }> = ({ item, onClose }) => {
-    const { t } = useAppContext();
+const CHEF_PICKS = new Set(['zurek_slaski', 'rolada_slaska', 'pierogi_ruskie', 'golonko_piwie', 'szarlotka', 'kompot_babuni']);
 
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [onClose]);
+const useToast = () => {
+    const [msg, setMsg] = useState<string | null>(null);
+    const timer = useRef<number | undefined>(undefined);
+    const show = useCallback((m: string) => {
+        setMsg(m);
+        window.clearTimeout(timer.current);
+        timer.current = window.setTimeout(() => setMsg(null), 2200);
+    }, []);
+    return [msg, show] as const;
+};
 
+const AddButton: React.FC<{ item: MenuItem; mediaRef: React.RefObject<HTMLElement>; onAdded: () => void }> = ({ item, mediaRef, onAdded }) => {
+    const { t, tray, addToTray } = useAppContext();
+    const qty = tray[item.name] || 0;
     return (
-        <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[110] animate-fadeIn p-4"
-            onClick={onClose}
+        <button
+            type="button"
+            className={`add-btn ${qty ? 'is-added' : ''}`}
+            onClick={() => {
+                flyToTray(mediaRef.current, img(item.imageIds[0]), () => addToTray(item.name));
+                onAdded();
+            }}
+            aria-label={`${t('add_to_table')}: ${t(item.name)}`}
         >
-            <div 
-                className="relative bg-secondary-light w-full max-w-lg rounded-lg shadow-2xl border-2 border-folk-blue/30 overflow-hidden flex flex-col"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="p-6 md:p-8 text-center border-b border-slate-200">
-                    <h2 className="text-2xl font-bold font-serif text-folk-red">{t(item.name)}</h2>
-                    <p className="text-sm text-text-dark-secondary">{t('allergens_and_ingredients')}</p>
-                </div>
-                <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 overflow-y-auto max-h-[60vh]">
-                    <div>
-                        <h3 className="text-lg font-semibold text-text-dark mb-2 border-b border-slate-300 pb-1">{t('ingredients')}</h3>
-                        <ul className="space-y-1 text-sm text-text-dark-secondary list-disc list-inside">
-                            {item.ingredientKeys?.map((key, index) => (
-                                <li key={index}>{t(key)}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-semibold text-text-dark mb-2 border-b border-slate-300 pb-1">{t('allergens')}</h3>
-                        {(item.allergenKeys && item.allergenKeys.length > 0) ? (
-                            <ul className="space-y-1 text-sm text-folk-red font-semibold list-disc list-inside">
-                                {item.allergenKeys.map((key, index) => (
-                                    <li key={index}>{t(key)}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-sm text-text-dark-secondary italic">{t('no_allergens_listed')}</p>
-                        )}
-                    </div>
-                </div>
-                <div className="mt-auto p-4 bg-slate-100 text-center border-t border-slate-200">
-                     <button
-                        onClick={onClose}
-                        className="bg-folk-red text-white font-bold py-2.5 px-8 rounded-lg hover:bg-folk-pink transform active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-folk-red/40"
-                    >
-                        {t('close')}
-                    </button>
-                </div>
-            </div>
-        </div>
+            {qty ? <IconCheck size={16} /> : <IconPlus size={16} />}
+            {qty ? `${t('added_to_table')} · ${qty}` : t('add_to_table')}
+        </button>
     );
 };
 
-const LightboxModal: React.FC<{ item: MenuItem; onClose: () => void }> = ({ item, onClose }) => {
+const DishModal: React.FC<{ item: MenuItem; onClose: () => void; onAdded: () => void }> = ({ item, onClose, onAdded }) => {
     const { t } = useAppContext();
-    const [isIngredientsModalOpen, setIsIngredientsModalOpen] = useState(false);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [idx, setIdx] = useState(0);
+    const mediaRef = useRef<HTMLDivElement>(null);
+    const closeRef = useRef<HTMLButtonElement>(null);
 
-    const nextImage = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setCurrentImageIndex((prev) => (prev + 1) % item.imageIds.length);
-    };
-
-    const prevImage = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setCurrentImageIndex((prev) => (prev - 1 + item.imageIds.length) % item.imageIds.length);
-    };
-    
     useEffect(() => {
-        document.body.style.overflow = 'hidden';
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && !isIngredientsModalOpen) {
-                onClose();
-            }
+        lockScroll(true);
+        closeRef.current?.focus();
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+            if (item.imageIds.length > 1 && e.key === 'ArrowRight') setIdx((i) => (i + 1) % item.imageIds.length);
+            if (item.imageIds.length > 1 && e.key === 'ArrowLeft') setIdx((i) => (i - 1 + item.imageIds.length) % item.imageIds.length);
         };
-        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keydown', onKey);
         return () => {
-            document.body.style.overflow = 'unset';
-            window.removeEventListener('keydown', handleKeyDown);
+            lockScroll(false);
+            window.removeEventListener('keydown', onKey);
         };
-    }, [onClose, isIngredientsModalOpen]);
+    }, [onClose, item]);
 
     return (
-        <>
-        <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-lg flex items-center justify-center z-[100] animate-fadeIn p-4"
-            onClick={onClose}
-        >
-            <div 
-                className="relative bg-secondary-light w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl overflow-hidden flex flex-col md:flex-row border-2 border-folk-red/30"
-                onClick={e => e.stopPropagation()}
-            >
-                <FlowerArtCorner className="absolute top-0 left-0 w-24 h-24 text-folk-red opacity-20 pointer-events-none" />
-                <FlowerArtCorner className="absolute top-0 right-0 w-24 h-24 text-folk-red opacity-20 pointer-events-none transform rotate-90" />
-                <FlowerArtCorner className="absolute bottom-0 left-0 w-24 h-24 text-folk-red opacity-20 pointer-events-none transform -rotate-90" />
-                <FlowerArtCorner className="absolute bottom-0 right-0 w-24 h-24 text-folk-red opacity-20 pointer-events-none transform rotate-180" />
-
-                <button 
-                    onClick={onClose} 
-                    className="absolute top-3 right-3 z-20 bg-black/40 text-white rounded-full p-2 hover:scale-110 hover:bg-black/60 transition-all duration-300"
-                    title="Zamknij"
-                    aria-label="Zamknij szczegóły dania"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        <div className="modal-backdrop" onClick={onClose}>
+            <div className="modal" role="dialog" aria-modal="true" aria-labelledby="dish-title" onClick={(e) => e.stopPropagation()} data-lenis-prevent>
+                <button ref={closeRef} type="button" className="icon-btn modal-close" onClick={onClose} aria-label={t('close')}>
+                    <IconClose />
                 </button>
-                
-                <div className="w-full md:w-1/2 h-64 md:h-auto flex-shrink-0 relative group">
-                    <img 
-                        src={`/images/${item.imageIds[currentImageIndex]}`} 
-                        alt={t(item.name)}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            console.error(`Failed to load image: /images/${item.imageIds[currentImageIndex]}`);
-                            e.currentTarget.style.display = 'none';
-                        }}
-                    />
+                <div ref={mediaRef} className="modal-media">
+                    <ZoomLens src={img(item.imageIds[idx])} alt={t(item.name)} hint={t('zoom_hint')} />
                     {item.imageIds.length > 1 && (
-                        <>
-                            <button 
-                                onClick={prevImage} 
-                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all duration-300"
-                                title="Poprzednie zdjęcie"
-                                aria-label="Poprzednie zdjęcie dania"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        <div style={{ position: 'absolute', right: 14, bottom: 14, display: 'flex', gap: 8, zIndex: 5 }}>
+                            <button type="button" className="icon-btn" aria-label={t('previous')} onClick={() => setIdx((i) => (i - 1 + item.imageIds.length) % item.imageIds.length)}>
+                                <IconArrowLeft />
                             </button>
-                            <button 
-                                onClick={nextImage} 
-                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all duration-300"
-                                title="Następne zdjęcie"
-                                aria-label="Następne zdjęcie dania"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <button type="button" className="icon-btn" aria-label={t('next')} onClick={() => setIdx((i) => (i + 1) % item.imageIds.length)}>
+                                <IconArrow />
                             </button>
-                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-                                {item.imageIds.map((_, index) => (
-                                    <button 
-                                        key={index} 
-                                        onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(index); }} 
-                                        className={`w-2.5 h-2.5 rounded-full ring-1 ring-white/50 transition-all duration-300 ${index === currentImageIndex ? 'bg-white scale-125' : 'bg-white/50'}`}
-                                        aria-label={`View image ${index + 1}`}
-                                    ></button>
-                                ))}
-                            </div>
-                        </>
+                        </div>
                     )}
                 </div>
-
-                <div className="w-full md:w-1/2 p-6 md:p-8 overflow-y-auto flex flex-col">
-                    <div className="flex-grow">
-                        <h2 className="text-3xl lg:text-4xl font-bold font-serif text-folk-red">{t(item.name)}</h2>
-                        <p className="mt-4 text-text-dark-secondary leading-relaxed">{t(item.description)}</p>
+                <div className="modal-body">
+                    {CHEF_PICKS.has(item.name) && <span className="chip chip--beet" style={{ alignSelf: 'flex-start' }}>{t('chef_pick')}</span>}
+                    <h3 id="dish-title" className="h-section" style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}>{t(item.name)}</h3>
+                    <p className="lede" style={{ margin: 0 }}>{t(item.description)}</p>
+                    <div className="list-cols" style={{ marginTop: 8 }}>
+                        <div>
+                            <h4>{t('ingredients')}</h4>
+                            <ul>
+                                {item.ingredientKeys?.map((k) => <li key={k}>{t(k)}</li>)}
+                            </ul>
+                        </div>
+                        <div className="allergen">
+                            <h4>{t('allergens')}</h4>
+                            {item.allergenKeys && item.allergenKeys.length > 0 ? (
+                                <ul>
+                                    {item.allergenKeys.map((k) => <li key={k}>{t(k)}</li>)}
+                                </ul>
+                            ) : (
+                                <p style={{ margin: 0, color: 'var(--cream-dim)', fontSize: 14 }}>{t('no_allergens_listed')}</p>
+                            )}
+                        </div>
                     </div>
-                     <div className="mt-8 pt-6 border-t border-slate-300">
-                        <button
-                            onClick={() => setIsIngredientsModalOpen(true)}
-                            className="w-full bg-transparent border-2 border-slate-300 text-text-dark-secondary font-semibold py-2.5 px-6 rounded-lg hover:bg-slate-200/50 transition-colors hover:ring-2 hover:ring-folk-blue/50"
-                        >
-                            {t('allergens_and_ingredients')}
-                        </button>
+                    <div style={{ marginTop: 'auto', paddingTop: 12, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                        <AddButton item={item} mediaRef={mediaRef} onAdded={onAdded} />
                     </div>
                 </div>
             </div>
         </div>
-        {isIngredientsModalOpen && <IngredientsModal item={item} onClose={() => setIsIngredientsModalOpen(false)} />}
-        </>
     );
 };
 
-const categoryIcons: { [key: string]: React.FC<{ className?: string }> } = {
-  category_soups: SoupIcon,
-  category_main_courses: MainCourseIcon,
-  category_appetizers: AppetizerIcon,
-  category_desserts: DessertIcon,
-  category_drinks: DrinkIcon,
+const DishCard: React.FC<{ item: MenuItem; onOpen: () => void; onAdded: () => void }> = ({ item, onOpen, onAdded }) => {
+    const { t } = useAppContext();
+    const media = useRef<HTMLDivElement>(null);
+    return (
+        <TiltCard className="dish-card" max={7}>
+            <div ref={media} className="dish-media" onClick={onOpen} role="button" tabIndex={0} aria-label={`${t('menu_details')}: ${t(item.name)}`} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onOpen())}>
+                {CHEF_PICKS.has(item.name) && <span className="chip chip--beet tag">{t('chef_pick')}</span>}
+                <img src={img(item.imageIds[0])} alt={t(item.name)} loading="lazy" decoding="async" />
+            </div>
+            <div className="dish-body">
+                <h3 className="h-card">{t(item.name)}</h3>
+                <p>{t(item.description)}</p>
+                <div className="dish-actions">
+                    <button type="button" className="link-btn" onClick={onOpen}>
+                        {t('menu_details')}
+                    </button>
+                    <AddButton item={item} mediaRef={media} onAdded={onAdded} />
+                </div>
+            </div>
+        </TiltCard>
+    );
 };
 
-export const MenuPage: React.FC<PageProps> = ({ id }) => {
+export const MenuPage: React.FC<{ id: string }> = ({ id }) => {
     const { t } = useAppContext();
-    const [activeTab, setActiveTab] = useState(MENU_DATA[0].category);
-    const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-
-    const activeCategoryItems = MENU_DATA.find(cat => cat.category === activeTab)?.items || [];
+    const [active, setActive] = useState(MENU_DATA[0].category);
+    const [selected, setSelected] = useState<MenuItem | null>(null);
+    const [toast, showToast] = useToast();
+    const items = MENU_DATA.find((c) => c.category === active)?.items || [];
+    const added = () => showToast(t('tray_added_toast'));
 
     return (
-        <>
-        <div 
-            id={id}
-            className="py-24 bg-primary-light text-text-dark relative" 
-            style={{
-                backgroundImage: "url('/images/logo.linku.jpeg')",
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'repeat',
-                backgroundAttachment: 'fixed'
-            }}
-        >
-            {/* Overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/40"></div>
-            
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <AnimatedSection className="text-center mb-16">
-                    <div className="flex justify-center items-center gap-4">
-                        <FolkArtFlourish className="text-folk-red/50 hidden md:block" />
-                        <h1 className="text-5xl md:text-7xl font-bold text-folk-red font-serif tracking-wider drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('menu_title')}</h1>
-                        <FolkArtFlourish className="text-folk-red/50 transform scale-x-[-1] hidden md:block" />
+        <section id={id} className="section" aria-labelledby="menu-title">
+            <div className="wrap">
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 28, marginBottom: 40 }}>
+                    <div style={{ maxWidth: 680 }}>
+                        <Reveal className="eyebrow">{t('menu_eyebrow')}</Reveal>
+                        <h2 id="menu-title" className="h-section" style={{ marginTop: 16 }}>
+                            <SplitText text={t('menu_title')} />
+                        </h2>
+                        <Reveal kind="blur" delay={0.1}>
+                            <p className="lede" style={{ marginTop: 16 }}>{t('menu_subtitle')}</p>
+                        </Reveal>
                     </div>
-                    <p className="mt-4 text-xl text-text-dark font-medium max-w-2xl mx-auto drop-shadow-lg">{t('menu_subtitle')}</p>
-                </AnimatedSection>
+                </div>
 
-                {/* Tabs */}
-                <AnimatedSection delay="duration-700">
-                    <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12">
-                        {MENU_DATA.map(category => {
-                            const Icon = categoryIcons[category.category];
-                            const isActive = activeTab === category.category;
-                            return (
-                                <button
-                                    key={category.category}
-                                    onClick={() => setActiveTab(category.category)}
-                                    className={`flex items-center space-x-2 px-4 py-2 rounded-full font-semibold transition-all duration-300 border-2 ${
-                                        isActive 
-                                        ? 'bg-folk-red border-folk-red text-white shadow-lg shadow-folk-red/30' 
-                                        : 'bg-transparent border-slate-300 text-text-dark-secondary hover:bg-folk-red/5 hover:border-folk-red/50 hover:text-folk-red'
-                                    }`}
-                                >
-                                    {Icon && <Icon className="w-5 h-5" />}
-                                    <span>{t(category.category)}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </AnimatedSection>
-                
-                <AnimatedSection delay="duration-1000">
-                    <div className="p-4 sm:p-6 md:p-8 rounded-lg shadow-inner bg-secondary-light/80 backdrop-blur-md">
-                        <div className="space-y-6 max-w-4xl mx-auto">
-                            {activeCategoryItems.map((item) => {
-                                const isHighlighted = item.name === 'piers_kurczaka_schabowy';
-                                return (
-                                    <div
-                                        key={item.name}
-                                        className={`relative bg-secondary-dark/60 p-4 rounded-lg shadow-lg border transition-all duration-300 flex items-center gap-4 md:gap-6 cursor-pointer group hover:bg-secondary-dark/90 hover:border-folk-red/50 hover:shadow-folk-red/20 hover:shadow-lg ${isHighlighted ? 'border-folk-red ring-1 ring-folk-red/50' : 'border-black/20'}`}
-                                        onClick={() => setSelectedItem(item)}
-                                    >
-                                        <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border-2 border-folk-red/20 group-hover:border-folk-red/60 transition-colors duration-300">
-                                            <img
-                                                loading="lazy"
-                                                src={`/images/${item.imageIds[0]}`}
-                                                alt={t(item.name)}
-                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                onError={(e) => {
-                                                    console.error(`Failed to load thumbnail: /images/${item.imageIds[0]}`);
-                                                    e.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="flex-grow">
-                                            <h3 className={`text-xl md:text-2xl font-bold font-serif ${isHighlighted ? 'text-folk-red' : 'text-text-light'}`}>
-                                                {t(item.name)}
-                                            </h3>
-                                            <p className="mt-2 text-sm text-text-light-secondary">
-                                                {t(item.description)}
-                                            </p>
-                                        </div>
-                                         <div className="absolute top-1/2 right-6 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-folk-red">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </AnimatedSection>
-
-                <AnimatedSection className="mt-20">
-                    <div 
-                        className="relative overflow-hidden text-center p-8 rounded-lg shadow-lg border border-slate-200 backdrop-blur-md"
-                        style={{
-                            backgroundImage: "url('/images/TŁO FACEBOOK .jpg')",
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat'
-                        }}
-                    >
-                        {/* Dark overlay for better text readability */}
-                        <div className="absolute inset-0 bg-black/60 rounded-lg"></div>
-                        
-                        <div className="relative z-10">
-                            <FolkArtCorner className="absolute -top-1 -left-1 text-folk-red/20 w-16 h-16" />
-                            <FolkArtCorner className="absolute -top-1 -right-1 text-folk-red/20 w-16 h-16 transform rotate-90" />
-                            <FolkArtCorner className="absolute -bottom-1 -left-1 text-folk-red/20 w-16 h-16 transform -rotate-90" />
-                            <FolkArtCorner className="absolute -bottom-1 -right-1 text-folk-red/20 w-16 h-16 transform rotate-180" />
-                            <h2 className="text-3xl font-bold text-white drop-shadow-lg [text-shadow:_2px_2px_4px_rgb(0_0_0_/_80%)]">{t('daily_menu_facebook')}</h2>
-                            <a
-                                href={FACEBOOK_URL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-3 px-8 py-3 mt-6 text-lg font-semibold text-black bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-md shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 ease-out"
+                <div className="tabs" role="tablist" aria-label={t('menu_title')} style={{ marginBottom: 32 }}>
+                    {MENU_DATA.map((c) => {
+                        const Icon = categoryIcons[c.category];
+                        return (
+                            <button
+                                key={c.category}
+                                type="button"
+                                role="tab"
+                                className="tab"
+                                aria-selected={active === c.category}
+                                onClick={() => active !== c.category && withViewTransition(() => setActive(c.category))}
                             >
-                                <FacebookIcon className="w-6 h-6" />
-                                {t('view_daily_menu_facebook')}
+                                {Icon && <Icon className="ico" />}
+                                {t(c.category)}
+                                <span className="count">{c.items.length}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="menu-grid" role="tabpanel">
+                    {items.map((item) => (
+                        <DishCard key={item.name} item={item} onOpen={() => withViewTransition(() => setSelected(item))} onAdded={added} />
+                    ))}
+                </div>
+
+                <Reveal kind="up">
+                    <div className="fb-band" style={{ ['--img' as any]: `url("${img('TŁO FACEBOOK .jpg')}")` }}>
+                        <h3>{t('daily_menu_facebook')}</h3>
+                        <Magnetic>
+                            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="btn btn--brass">
+                                <IconFacebook size={18} />
+                                <span className="btn-label">{t('view_daily_menu_facebook')}</span>
                             </a>
-                        </div>
+                        </Magnetic>
                     </div>
-                </AnimatedSection>
+                </Reveal>
             </div>
-        </div>
-        {selectedItem && <LightboxModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
-        </>
+            {selected && <DishModal item={selected} onClose={() => setSelected(null)} onAdded={added} />}
+            {toast && (
+                <div className="toast" role="status">
+                    {toast}
+                </div>
+            )}
+        </section>
     );
 };

@@ -40,4 +40,9 @@ export type AppContextType = {
   t: (key: string) => string;
   theme: 'light' | 'dark' | 'wood' | 'flower';
   toggleTheme: () => void;
+  /** Dishes the guest wants to mention with the reservation: dish key -> quantity */
+  tray: Record<string, number>;
+  addToTray: (dish: string) => void;
+  changeQty: (dish: string, delta: number) => void;
+  clearTray: () => void;
 };

@@ -1,63 +1,85 @@
-
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { AppContextType, Language } from '../types';
 import { translations } from '../i18n/translations';
+import { withViewTransition } from '../lib/motion';
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-interface AppProviderProps {
-    children: React.ReactNode;
-}
+const readLang = (): Language => {
+    try {
+        const stored = localStorage.getItem('language') as Language;
+        if (stored && Object.values(Language).includes(stored)) return stored;
+    } catch {
+        /* storage unavailable */
+    }
+    return Language.NL;
+};
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-    // Initialize language from localStorage or default to NL, but only on client
-    const [language, setLanguage] = useState<Language>(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem('language') as Language;
-            if (stored && Object.values(Language).includes(stored)) {
-                return stored;
-            }
-        }
-        return Language.NL;
-    });
+const readTray = (): Record<string, number> => {
+    try {
+        const raw = localStorage.getItem('lb-tray');
+        if (raw) return JSON.parse(raw);
+    } catch {
+        /* storage unavailable */
+    }
+    return {};
+};
 
-    const theme = 'light'; // Stały jasny motyw
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [language, setLanguageState] = useState<Language>(readLang);
+    const [tray, setTray] = useState<Record<string, number>>(readTray);
 
-    // Save language to localStorage whenever it changes
     useEffect(() => {
-        if (typeof window !== 'undefined') {
+        try {
             localStorage.setItem('language', language);
+        } catch {
+            /* ignore */
         }
+        document.documentElement.lang = language.toLowerCase();
     }, [language]);
 
-    const changeLanguage = useCallback((newLanguage: Language) => {
-        setLanguage(newLanguage);
+    useEffect(() => {
+        try {
+            localStorage.setItem('lb-tray', JSON.stringify(tray));
+        } catch {
+            /* ignore */
+        }
+    }, [tray]);
+
+    const setLanguage = useCallback((next: Language) => {
+        withViewTransition(() => setLanguageState(next));
     }, []);
 
-    const toggleTheme = useCallback(() => {
-        // Funkcja wyłączona - motyw zawsze jasny
-    }, []);
+    const t = useCallback((key: string): string => translations[key]?.[language] || translations[key]?.[Language.EN] || key, [language]);
 
-    const t = useCallback((key: string): string => {
-        console.log(`[DEBUG] t called with key: "${key}", language: ${language}`);
-        console.log(`[DEBUG] translations[${key}]:`, translations[key]);
-        console.log(`[DEBUG] translations[${key}]?.[${language}]:`, translations[key]?.[language]);
-        const result = translations[key]?.[language] || key;
-        console.log(`[DEBUG] result: "${result}"`);
-        return result;
-    }, [language]);
-
-    const contextValue: AppContextType = {
-        language,
-        theme,
-        setLanguage: changeLanguage,
-        toggleTheme,
-        t,
-    };
-
-    return (
-        <AppContext.Provider value={contextValue}>
-            {children}
-        </AppContext.Provider>
+    const addToTray = useCallback((dish: string) => setTray((p) => ({ ...p, [dish]: (p[dish] || 0) + 1 })), []);
+    const changeQty = useCallback(
+        (dish: string, delta: number) =>
+            setTray((p) => {
+                const n = (p[dish] || 0) + delta;
+                const next = { ...p };
+                if (n <= 0) delete next[dish];
+                else next[dish] = n;
+                return next;
+            }),
+        []
     );
+    const clearTray = useCallback(() => setTray({}), []);
+
+    const value = useMemo<AppContextType>(
+        () => ({
+            language,
+            setLanguage,
+            t,
+            theme: 'dark',
+            toggleTheme: () => {},
+            tray,
+            addToTray,
+            changeQty,
+            clearTray,
+        }),
+        [language, setLanguage, t, tray, addToTray, changeQty, clearTray]
+    );
+
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
