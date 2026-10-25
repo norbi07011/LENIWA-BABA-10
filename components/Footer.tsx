@@ -131,8 +131,12 @@ export const Footer: React.FC = () => {
                                 <span className="text-xl">🕐</span>
                                 <div>
                                     <div className="font-semibold text-text-dark">Godziny otwarcia</div>
-                                    <div>Wt-Nd: 16:00 - 23:00</div>
+                                    <div>Wt-Pt: 16:00 - 23:00</div>
                                     <div className="text-sm text-slate-600">Kuchnia czynna do 21:00</div>
+                                    <div className="mt-1">Sobota: kuchnia 12:00 - 21:00</div>
+                                    <div className="text-sm text-slate-600">Bar czynny do 24:00</div>
+                                    <div className="mt-1">Niedziela: kuchnia 12:00 - 20:00</div>
+                                    <div className="text-sm text-slate-600">Bar czynny do 21:30</div>
                                     <div className="text-folk-red font-semibold">Poniedziałek nieczynne</div>
                                 </div>
                             </li>

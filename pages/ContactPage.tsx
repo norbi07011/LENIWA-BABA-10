@@ -67,9 +67,7 @@ export const ContactPage: React.FC<PageProps> = ({ id }) => {
                         <AnimatedSection delay="duration-700">
                              <ContactCard icon={<ClockIcon/>} title={t('opening_hours')}>
                                 <div className="text-sm sm:text-base md:text-lg space-y-2 sm:space-y-3 pt-2 sm:pt-3 border-t border-slate-200 w-full">
-                                    <div className="flex justify-between items-center">
-                                        <span>{t('monday_sunday')}</span>
-                                    </div>
+                                    <div className="font-semibold text-folk-red pt-2">{t('tuesday_friday')}</div>
                                     <div className="flex justify-between items-center">
                                         <span>{t('opening_hours_restaurant')}</span>
                                         <span className="font-semibold">16:00 – 23:00</span>
@@ -77,6 +75,24 @@ export const ContactPage: React.FC<PageProps> = ({ id }) => {
                                     <div className="flex justify-between items-center">
                                         <span>{t('opening_hours_kitchen')}</span>
                                         <span className="font-semibold">{t('kitchen_hours_close')}</span>
+                                    </div>
+                                    <div className="font-semibold text-folk-red pt-2">{t('saturday')}</div>
+                                    <div className="flex justify-between items-center">
+                                        <span>{t('opening_hours_kitchen')}</span>
+                                        <span className="font-semibold">12:00 – 21:00</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>{t('opening_hours_bar')}</span>
+                                        <span className="font-semibold">{t('bar_hours_close_sat')}</span>
+                                    </div>
+                                    <div className="font-semibold text-folk-red pt-2">{t('sunday')}</div>
+                                    <div className="flex justify-between items-center">
+                                        <span>{t('opening_hours_kitchen')}</span>
+                                        <span className="font-semibold">12:00 – 20:00</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>{t('opening_hours_bar')}</span>
+                                        <span className="font-semibold">{t('bar_hours_close_sun')}</span>
                                     </div>
                                     <div className="text-folk-red font-semibold text-center mt-2">
                                         {t('monday_closed')}
